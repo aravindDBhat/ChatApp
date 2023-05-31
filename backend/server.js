@@ -29,6 +29,7 @@ app.use(
 
 app.use("/api/users", usersRoute);
 app.use("/api/auth", userAuth);
+console.log("hello");
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
