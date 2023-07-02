@@ -39,8 +39,13 @@ async function createNewUser(userData) {
   return await newUser.save();
 }
 
+async function getAllUsers() {
+  return await User.find({});
+}
+
 module.exports = {
   validateUserPayload,
   findUserByEmail,
   createNewUser,
+  getAllUsers,
 };

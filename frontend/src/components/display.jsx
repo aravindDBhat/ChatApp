@@ -1,44 +1,80 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Channels from "./channels.jsx";
 import Text from "./text.jsx";
 import Member from "./member.jsx";
 import Messages from "./messages.jsx";
+import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
 import Day from "./date.jsx";
 import { io } from "socket.io-client";
-const socket = io.connect("http://localhost:3001");
+const API_BASE_URL = process.env.REACT_APP_API_BACKEND_BASEURL;
+const socket = io.connect(process.env.REACT_APP_API_BACKEND_BASEURL);
 socket.on("connection", (data) => {
   console.log("hello");
 });
 
 socket.emit("join", 123);
 function Display() {
-  const [texts, setTexts] = useState("");
-  const [array, setArray] = useState([]);
-  console.log("text value is : ", texts);
-  const t = () => {
-    if (texts !== "") {
-      const msgs = {
-        key: array.length,
-        msg: texts,
-        name: "name",
+  const [messageArray, setMessageArray] = useState([]);
+  const [to, setTo] = useState("to");
+  const [message, setMessage] = useState("");
+  const [chatRoom, setChatRoom] = useState("adsfdgfhh767");
+  const navigate = useNavigate();
+
+  const handleMessageChange = (e) => {
+    setMessage(e.target.value);
+  };
+
+  const newChatRoom = () => {
+    setChatRoom(uuidv4());
+    console.log(chatRoom);
+  };
+  const fetchAllMessages = async () => {
+    try {
+      const payload = {
+        conversationId: chatRoom,
+        to: "to",
+        from: "from",
+        msg: message,
         time: new Date().toLocaleString("en-US", {
           hour: "numeric",
           minute: "numeric",
           hour12: true,
         }),
       };
-      socket.emit("msg", msgs);
-      setTexts("");
-    } else {
-      console.log("text is null");
+      console.log("payload is : ", payload);
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      const { data } = await axios.get(
+        `${process.env.REACT_APP_API_BACKEND_BASEURL}/api/text`,
+        payload,
+        config
+      );
+      console.log("data is : ", data);
+      try {
+        const token = window.localStorage.getItem("token");
+        const user = window.localStorage.getItem("user");
+        if (!token || !user) {
+          console.log("User is not logged in. Redireting to /signin");
+          navigate("/signin");
+        } else {
+          navigate("/text");
+        }
+      } catch (error) {
+        console.error(error);
+        navigate("/signin");
+      }
+      setMessageArray(data);
+      console.log("message array: ", messageArray);
+    } catch (error) {
+      console.log(error);
+      return;
     }
   };
-  useEffect(() => {
-    socket.on("receive", (data) => {
-      setArray((prevarray) => [...prevarray, data]);
-      document.getElementById("text").value = "";
-    });
-  }, []);
 
   return (
     <div className="divmargin .container-fluid">
@@ -58,13 +94,13 @@ function Display() {
               <div className="msgdiv">
                 <Day />
 
-                <Messages array={array} />
+                <Messages array={messageArray} />
               </div>
             </div>
             <div className="rowmain">
-              <Text t={t} fun={setTexts} />
+              <Text t={handleMessageChange} val={message} />
               <div className="row2">
-                <button onClick={t} className="btn btn-primary">
+                <button onClick={fetchAllMessages} className="btn btn-primary">
                   Send
                 </button>
               </div>
@@ -72,7 +108,7 @@ function Display() {
           </div>
           <div className="col-2">
             {" "}
-            <Member />
+            <Member fun={newChatRoom} />
           </div>
         </div>
       </div>

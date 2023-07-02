@@ -5,10 +5,11 @@ const userService = require("../services/users.service");
 
 router.get("/", async function (req, res) {
   try {
+    const allUsers = await userService.getAllUsers();
     res.json({
       statusCode: 200,
       data: {
-        users: [],
+        users: allUsers,
       },
     });
   } catch (error) {

@@ -28,7 +28,7 @@ async function signIn({ res, req }) {
   if (!isUserValid) {
     return res.status(401).json({
       statusCode: 401,
-      msg: "user does not exist. Please sign up",
+      msg: "Wrong username and password.",
     });
   }
   const payload = {
@@ -68,16 +68,23 @@ async function signUp({ req, res }) {
     password,
   });
   const payload = {
-    userId: existingUser._id,
-    email: existingUser.email,
-    name: existingUser.name,
+    userId: newUser._id,
+    email: newUser.email,
+    name: newUser.name,
   };
-  const jwt = generateJWT(payload);
+  const jwtdata = generateJWT(payload);
+  jwt.verify(jwtdata, process.env.JWT_TOKEN_SECRET, (err, decoded) => {
+    console.log("verifying jwt");
+    if (err) {
+      console.log("Invalid JWT");
+    } else {
+      console.log("valid jwt and Decoded JWT:", decoded);
+    }
+  });
   return res.json({
     statusCode: 200,
     data: {
-      data: newUser,
-      jwt,
+      jwt: jwtdata,
       user: payload,
     },
   });

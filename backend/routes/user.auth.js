@@ -16,7 +16,7 @@ router.post("/signin", async (req, res) => {
     console.error(error);
     res.json({
       statusCode: 401,
-      msg: error.message,
+      error: error.message,
     });
   }
 });
