@@ -5,13 +5,11 @@ const textService = require("../services/text.service");
 
 router.get("/text", async (req, res) => {
   try {
-    const { conversationId } = req.body;
-    console.log("data is : ", req.body);
-    const allmsg = await textService.AddMsg(req.body);
-    const allMessage = await textService.getConversationById(
-      conversationId,
-      res
-    );
+    const { userId } = req.query;
+    const allMessage = await textService.getConversationById({
+      userId,
+    });
+
     res.json({
       statusCode: 200,
       data: allMessage,
@@ -30,13 +28,10 @@ router.post("/text", async (req, res) => {
     const data = req.body;
     console.log(data);
 
-    const allmsg = await textService.AddMsg(data);
-    const messages = await textService.getConversationById(
-      data.conversationId,
-      res
-    );
+    const newMessage = await textService.AddMsg(data);
     res.json({
-      msgs: "",
+      statusCode: 200,
+      data: newMessage,
     });
   } catch (error) {
     return res.json({

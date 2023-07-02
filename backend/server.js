@@ -9,6 +9,7 @@ const cors = require("cors");
 const usersRoute = require("./routes/users.routes");
 const userAuth = require("./routes/user.auth.js");
 const usermsg = require("./routes/user.text.js");
+const conversation = require("./routes/user.conversation.js");
 const PORT = process.env.APP_PORT || 4000;
 const app = express();
 const httpServer = createServer(app);
@@ -58,6 +59,7 @@ io.on("connection", (socket) => {
 app.use("/api/users", usersRoute);
 app.use("/api/auth", userAuth);
 app.use("/api", usermsg);
+app.use("api", conversation);
 console.log("hi");
 httpServer.listen(PORT, () => {
   console.log("Server is running on port " + PORT);

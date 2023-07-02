@@ -21,6 +21,7 @@ function Display() {
   const [message, setMessage] = useState("");
   const [chatRoom, setChatRoom] = useState("adsfdgfhh767");
   const navigate = useNavigate();
+  const [user, setUser] = useState([]);
 
   const handleMessageChange = (e) => {
     setMessage(e.target.value);
@@ -30,7 +31,38 @@ function Display() {
     setChatRoom(uuidv4());
     console.log(chatRoom);
   };
-  const fetchAllMessages = async () => {
+  const fetchAllMessages = async ({ conversationId }) => {
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+      const { data } = await axios.get(
+        `${API_BASE_URL}/api/text?conversationId=${conversationId}`,
+        config
+      );
+
+      setMessageArray(data);
+      console.log("message array: ", messageArray);
+    } catch (error) {
+      console.log(error);
+      return;
+    }
+  };
+  const fetchAllChats = async ({ userId }) => {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    const { data } = await axios.get(
+      `${API_BASE_URL}/api/conversation?userId=${userId}`,
+      config
+    );
+  };
+
+  const handleSendMessage = async () => {
     try {
       const payload = {
         conversationId: chatRoom,
@@ -49,32 +81,34 @@ function Display() {
           "Content-Type": "application/json",
         },
       };
-      const { data } = await axios.get(
-        `${process.env.REACT_APP_API_BACKEND_BASEURL}/api/text`,
+      const { data } = await axios.post(
+        `${API_BASE_URL}/api/text`,
         payload,
         config
       );
-      console.log("data is : ", data);
-      try {
-        const token = window.localStorage.getItem("token");
-        const user = window.localStorage.getItem("user");
-        if (!token || !user) {
-          console.log("User is not logged in. Redireting to /signin");
-          navigate("/signin");
-        } else {
-          navigate("/text");
-        }
-      } catch (error) {
-        console.error(error);
-        navigate("/signin");
-      }
-      setMessageArray(data);
-      console.log("message array: ", messageArray);
     } catch (error) {
       console.log(error);
       return;
     }
   };
+  useEffect(() => {
+    try {
+      const token = window.localStorage.getItem("token");
+      const user = window.localStorage.getItem("user");
+      if (!token || !user) {
+        console.log("User is not logged in. Redireting to /signin");
+        navigate("/signin");
+      }
+      const userData = JSON.parse(user);
+      fetchAllChats({
+        userId: userData.userId,
+      });
+      setUser(userData);
+    } catch (error) {
+      console.error(error);
+      navigate("/signin");
+    }
+  }, []);
 
   return (
     <div className="divmargin .container-fluid">
@@ -100,7 +134,7 @@ function Display() {
             <div className="rowmain">
               <Text t={handleMessageChange} val={message} />
               <div className="row2">
-                <button onClick={fetchAllMessages} className="btn btn-primary">
+                <button onClick={handleSendMessage} className="btn btn-primary">
                   Send
                 </button>
               </div>
