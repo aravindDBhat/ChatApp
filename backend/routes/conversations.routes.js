@@ -5,10 +5,11 @@ const userService = require("../services/users.service");
 
 router.get("/", async (req, res, next) => {
   try {
-    const { userId } = req.query;
+    const { userId, type } = req.query;
+
     const conversations = await coversationService.getUserByConversationId({
       userId,
-      next
+      type
     });
 
     res.json({

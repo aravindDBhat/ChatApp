@@ -8,20 +8,20 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import Day from "./date.jsx";
 import { io } from "socket.io-client";
+import { useSearchParams } from "react-router-dom";
 const API_BASE_URL = process.env.REACT_APP_API_BACKEND_BASEURL;
 const socket = io.connect(process.env.REACT_APP_API_BACKEND_BASEURL);
-socket.on("connection", (data) => {
-  console.log("hello");
-});
-
-socket.emit("join", 123);
 function Display() {
   const [messageArray, setMessageArray] = useState([]);
-  const [to, setTo] = useState("to");
   const [message, setMessage] = useState("");
   const [chatRoom, setChatRoom] = useState("adsfdgfhh767");
   const navigate = useNavigate();
   const [user, setUser] = useState([]);
+  const [searchParams] = useSearchParams();
+  const [chatId, setChatId] = useState("");
+
+  const [groupConversations, setGroupConversations] = useState([]);
+  const [directConversations, setDirectConversations] = useState([]);
 
   const handleMessageChange = (e) => {
     setMessage(e.target.value);
@@ -38,28 +38,29 @@ function Display() {
           "Content-Type": "application/json",
         },
       };
-      const { data } = await axios.get(
-        `${API_BASE_URL}/api/text?conversationId=${conversationId}`,
+      const { data: response } = await axios.get(
+        `${API_BASE_URL}/api/messages?conversationId=${conversationId}`,
         config
       );
 
-      setMessageArray(data);
-      console.log("message array: ", messageArray);
+      setMessageArray(response.data);
     } catch (error) {
       console.log(error);
       return;
     }
   };
-  const fetchAllChats = async ({ userId }) => {
+  const fetchAllChats = async ({ userId, type }) => {
     const config = {
       headers: {
         "Content-Type": "application/json",
       },
     };
-    const { data } = await axios.get(
-      `${API_BASE_URL}/api/conversation?userId=${userId}`,
+    const { data: response } = await axios.get(
+      `${API_BASE_URL}/api/conversations?userId=${userId}&type=${type}`,
       config
     );
+    if (type === "group") setGroupConversations(response.data);
+    if (type === "direct") setDirectConversations(response.data);
   };
 
   const handleSendMessage = async () => {
@@ -102,8 +103,19 @@ function Display() {
       const userData = JSON.parse(user);
       fetchAllChats({
         userId: userData.userId,
+        type: "group",
+      });
+
+      fetchAllChats({
+        userId: userData.userId,
+        type: "direct",
       });
       setUser(userData);
+      const chatId = searchParams.get("chatId");
+      if (chatId) {
+        fetchAllMessages({ conversationId: chatId });
+        setChatId(chatId);
+      }
     } catch (error) {
       console.error(error);
       navigate("/signin");
@@ -114,12 +126,32 @@ function Display() {
     <div className="divmargin .container-fluid">
       <div className="container">
         <div className="row ">
-          <div className="col-2 ">
-            <div>
-              <Channels heading="Channels" />
-            </div>
-            <div>
-              <Channels heading="Direct Messages" />
+          <div className="col-2">
+            <div
+              style={{
+                height: "90vh",
+                overflow: "hidden",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              {groupConversations && groupConversations.length > 0 && (
+                <Channels
+                  heading="Channels"
+                  chats={groupConversations}
+                  type="group"
+                />
+              )}
+              {directConversations && directConversations.length > 0 && (
+                <>
+                  <hr />
+                  <Channels
+                    heading="Direct Messages"
+                    chats={directConversations}
+                    type="direct"
+                  />
+                </>
+              )}
             </div>
           </div>
           <div className="col-8">

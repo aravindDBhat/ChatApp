@@ -1,7 +1,7 @@
 
 const Conversation = require("../models/conversationModel");
 const userService = require('./users.service')
-async function getUserByConversationId({ userId }) {
+async function getUserByConversationId({ userId, type }) {
   const user = await userService.findUserByUsersIds([userId])
   if (!user.length) {
     throw new Error(JSON.stringify({
@@ -12,7 +12,9 @@ async function getUserByConversationId({ userId }) {
   return await Conversation.find({
     users: {
       $in: user
-    }
+    },
+    ...(type ? { conversationType: type } : null)
+
   });
 }
 
