@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-
 const userSchema = mongoose.Schema({
   name: {
     type: String,
@@ -24,4 +23,4 @@ userSchema.methods.toJSON = function () {
 
 const User = mongoose.model("Users", userSchema);
 
-module.exports = User;
+module.exports = { User, userSchema };

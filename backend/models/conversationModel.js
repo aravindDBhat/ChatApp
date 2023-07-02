@@ -1,15 +1,17 @@
 const mongoose = require("mongoose");
-
+const { userSchema } = require('./userModel')
 const conversarionSchema = mongoose.Schema({
   conversationId: {
     type: String,
     required: true,
   },
-  userId: {
+  conversationName: {
     type: String,
-    required: true,
+    required: false
   },
-  msg: {
+  users: [userSchema],
+
+  conversationType: {
     type: String,
     required: true,
   },
@@ -18,5 +20,5 @@ const conversarionSchema = mongoose.Schema({
     required: true,
   },
 });
-const Conversation = mongoose.model("Cessages", conversarionSchema);
+const Conversation = mongoose.model("Conversation", conversarionSchema);
 module.exports = Conversation;
