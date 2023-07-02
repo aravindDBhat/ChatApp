@@ -5,11 +5,7 @@ const messageSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  to: {
-    type: String,
-    required: true,
-  },
-  from: {
+  userId: {
     type: String,
     required: true,
   },
