@@ -43,4 +43,9 @@ async function createNewConversation({
   })
   return await newConversation.save()
 }
-module.exports = { getUserByConversationId, createNewConversation };
+async function getConversationById(conversationId) {
+  return await Conversation.findOne({
+    conversationId
+  })
+}
+module.exports = { getUserByConversationId, createNewConversation, getConversationById };

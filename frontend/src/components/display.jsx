@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Channels from "./channels.jsx";
-import Text from "./text.jsx";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
 import Member from "./member.jsx";
 import Messages from "./messages.jsx";
 import axios from "axios";
-import { v4 as uuidv4 } from "uuid";
-import Day from "./date.jsx";
+
 import { io } from "socket.io-client";
 import { useSearchParams } from "react-router-dom";
 const API_BASE_URL = process.env.REACT_APP_API_BACKEND_BASEURL;
@@ -14,23 +14,38 @@ const socket = io.connect(process.env.REACT_APP_API_BACKEND_BASEURL);
 function Display() {
   const [messageArray, setMessageArray] = useState([]);
   const [message, setMessage] = useState("");
-  const [chatRoom, setChatRoom] = useState("adsfdgfhh767");
   const navigate = useNavigate();
   const [user, setUser] = useState([]);
   const [searchParams] = useSearchParams();
   const [chatId, setChatId] = useState("");
-
   const [groupConversations, setGroupConversations] = useState([]);
   const [directConversations, setDirectConversations] = useState([]);
+  const [isShowMember, setIsShowMember] = useState(false);
+  const [currentConversation, setCurrentConversation] = useState({});
 
-  const handleMessageChange = (e) => {
-    setMessage(e.target.value);
+  const getDirectChatName = (chat) => {
+    try {
+      const name = chat.users.filter((u) => u._id !== user.userId)[0].name;
+      console.log("CHatNA=>", name);
+      return name;
+    } catch (error) {}
   };
 
-  const newChatRoom = () => {
-    setChatRoom(uuidv4());
-    console.log(chatRoom);
+  socket.on("newMessage", (data) => {
+    setMessageArray([...messageArray, data]);
+  });
+
+  const fetchCurrentConversationDetails = async (conversationId) => {
+    try {
+      const { data: response } = await axios.get(
+        `${API_BASE_URL}/api/conversations/${conversationId}`
+      );
+      setCurrentConversation(response.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
+
   const fetchAllMessages = async ({ conversationId }) => {
     try {
       const config = {
@@ -38,11 +53,11 @@ function Display() {
           "Content-Type": "application/json",
         },
       };
+      fetchCurrentConversationDetails(conversationId);
       const { data: response } = await axios.get(
         `${API_BASE_URL}/api/messages?conversationId=${conversationId}`,
         config
       );
-
       setMessageArray(response.data);
     } catch (error) {
       console.log(error);
@@ -66,27 +81,26 @@ function Display() {
   const handleSendMessage = async () => {
     try {
       const payload = {
-        conversationId: chatRoom,
-        to: "to",
-        from: "from",
-        msg: message,
-        time: new Date().toLocaleString("en-US", {
-          hour: "numeric",
-          minute: "numeric",
-          hour12: true,
-        }),
+        conversationId: chatId,
+        user: user.userId,
+        text: message,
       };
-      console.log("payload is : ", payload);
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
+      socket.emit("newMessage", {
+        channelId: chatId,
+        messageData: payload,
+      });
+      setMessageArray([
+        ...messageArray,
+        {
+          user: {
+            _id: user.userId,
+            name: user.name,
+          },
+          time: new Date(),
+          text: message,
         },
-      };
-      const { data } = await axios.post(
-        `${API_BASE_URL}/api/text`,
-        payload,
-        config
-      );
+      ]);
+      setMessage("");
     } catch (error) {
       console.log(error);
       return;
@@ -112,8 +126,11 @@ function Display() {
       });
       setUser(userData);
       const chatId = searchParams.get("chatId");
-      if (chatId) {
+      if (chatId && user) {
         fetchAllMessages({ conversationId: chatId });
+        socket.emit("joinChannel", {
+          channelId: chatId,
+        });
         setChatId(chatId);
       }
     } catch (error) {
@@ -135,49 +152,90 @@ function Display() {
                 flexDirection: "column",
               }}
             >
-              {groupConversations && groupConversations.length > 0 && (
+              {groupConversations && user && groupConversations.length > 0 && (
                 <Channels
                   heading="Channels"
                   chats={groupConversations}
                   type="group"
+                  onNewConversationCreate={(newConversation) => {
+                    setGroupConversations([
+                      ...groupConversations,
+                      newConversation,
+                    ]);
+                  }}
+                  currentUser={user}
                 />
               )}
-              {directConversations && directConversations.length > 0 && (
-                <>
-                  <hr />
-                  <Channels
-                    heading="Direct Messages"
-                    chats={directConversations}
-                    type="direct"
-                  />
-                </>
-              )}
+              {user &&
+                directConversations &&
+                directConversations.length > 0 && (
+                  <>
+                    <hr />
+                    <Channels
+                      heading="Direct Messages"
+                      chats={directConversations}
+                      currentUser={user}
+                      type="direct"
+                      onNewConversationCreate={(newConversation) => {
+                        setDirectConversations([
+                          ...directConversations,
+                          newConversation,
+                        ]);
+                      }}
+                    />
+                  </>
+                )}
             </div>
           </div>
-          <div className="col-8">
+          <div className="col">
             {/* <ScrollToBottom className="scroll-to-bottom"> */}
-            <div className=" row ">
-              <div className="msgdiv">
-                <Day />
+            <div className="d-flex flex-column justify-content-between h-100 m-0 p-0">
+              <div className="pb-4 border-bottom">
+                <div className="d-flex  justify-content-between">
+                  <div>
+                    {currentConversation &&
+                    currentConversation?.conversationType === "group"
+                      ? currentConversation.conversationName
+                      : ""}
+                    {currentConversation &&
+                    currentConversation?.conversationType === "direct"
+                      ? getDirectChatName(currentConversation)
+                      : ""}
+                  </div>
+                  <div onClick={() => setIsShowMember(true)}>
+                    <i class="fa-solid fa-users"></i>
+                  </div>
+                </div>
+              </div>
+              <div className="h-100">
+                <Messages currentUser={user} array={messageArray} />
+              </div>
+              <div className="d-flex justify-content-between">
+                <Form.Control
+                  type="text"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  id="roomName"
+                  aria-describedby="roomNameHelp"
+                />
 
-                <Messages array={messageArray} />
+                <div className="m-2">
+                  <Button
+                    onClick={handleSendMessage}
+                    className="btn btn-primary"
+                  >
+                    Send
+                  </Button>
+                </div>
               </div>
             </div>
-            <div className="rowmain">
-              <Text t={handleMessageChange} val={message} />
-              <div className="row2">
-                <button onClick={handleSendMessage} className="btn btn-primary">
-                  Send
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="col-2">
-            {" "}
-            <Member fun={newChatRoom} />
           </div>
         </div>
       </div>
+      <Member
+        handleClick={(val) => setIsShowMember(val)}
+        isOpen={isShowMember}
+      />
     </div>
   );
 }

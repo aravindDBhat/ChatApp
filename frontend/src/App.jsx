@@ -1,5 +1,7 @@
 import React from "react";
 import "./CSS/style.css";
+import "./App.css";
+import "rsuite/dist/rsuite.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Display from "./components/display.jsx";
 import SignUp from "./components/signup.jsx";

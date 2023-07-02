@@ -63,4 +63,32 @@ router.post('/', async (req, res) => {
 
   }
 })
+
+router.get('/:conversationId', async (req, res) => {
+  try {
+    const {
+      conversationId,
+    } = req.params
+
+    const conversation = await coversationService.getConversationById(conversationId)
+    if (!conversation) {
+
+      return res.status(404).json({
+        statusCode: 404,
+        error: `ConversationId not found`
+      })
+    }
+
+    res.json({
+      statusCode: 200,
+      data: conversation
+    })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      statusCode: 500,
+      error: error.message
+    })
+  }
+})
 module.exports = router;
