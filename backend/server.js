@@ -7,12 +7,13 @@ const mongoose = require("mongoose");
 dotenv.config();
 const cors = require("cors");
 const usersRoute = require("./routes/users.routes");
-const userAuth = require("./routes/user.auth.js");
-const usermsg = require("./routes/user.text.js");
-const conversation = require("./routes/user.conversation.js");
+const authRoute = require("./routes/auth.routes");
+const messagesRoute = require("./routes/messages.routes");
+const conversationsRoute = require("./routes/conversations.routes");
 const PORT = process.env.APP_PORT || 4000;
 const app = express();
 const httpServer = createServer(app);
+const messageService = require('./services/message.service')
 
 const io = new Server(httpServer, {
   cors: {
@@ -46,23 +47,30 @@ app.use(
   })
 );
 
+app.use("/api/users", usersRoute);
+app.use("/api/auth", authRoute);
+app.use("/api/messages", messagesRoute);
+app.use("/api/conversations", conversationsRoute);
+
+
 io.on("connection", (socket) => {
-  console.log(socket.id);
-  socket.on("join", () => {
-    socket.join(123);
-  });
-  socket.on("msg", (data) => {
-    socket.to(123).emit("receive", data);
+
+  socket.on('joinChannel', ({ channelId }) => {
+    console.log("Join: " + channelId)
+    socket.join(channelId)
+  })
+
+  socket.on("newMessage", async ({ channelId, messageData }) => {
+    // Handle the "newMessage" event
+    console.log("New message received:", messageData);
+    const newMessage = await messageService.AddMsg(messageData)
+    // emit new message to clients
+    socket.in(channelId).emit('newMessage', newMessage)
   });
 });
 
-app.use("/api/users", usersRoute);
-app.use("/api/auth", userAuth);
-app.use("/api", usermsg);
-app.use("api", conversation);
-console.log("hi");
 httpServer.listen(PORT, () => {
   console.log("Server is running on port " + PORT);
 });
 
-module.exports = app;
+module.exports = { app };

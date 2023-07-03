@@ -1,4 +1,4 @@
-const User = require("../models/userModel");
+const { User } = require("../models/userModel");
 function validateUserPayload({ name, email, password, res }) {
   if (!name)
     return res.status(400).json({
@@ -38,6 +38,14 @@ async function createNewUser(userData) {
   });
   return await newUser.save();
 }
+async function findUserByUsersIds(userIds) {
+  return await User.find({
+    _id: {
+      $in: userIds
+    }
+  })
+}
+
 
 async function getAllUsers() {
   return await User.find({});
@@ -48,4 +56,5 @@ module.exports = {
   findUserByEmail,
   createNewUser,
   getAllUsers,
+  findUserByUsersIds
 };

@@ -1,8 +1,15 @@
-import React,{Component} from "react";
-function MessagesContent(props){
-        return <div className="msgh5">
-             <p><b>{props.content.name} </b><b className="time">{props.content.time}</b></p>
-            <h6 className="msgh6">{props.content.msg} </h6>
-        </div>
-    }
-export default MessagesContent 
+import React from "react";
+function MessagesContent({ content, currentUser }) {
+  return (
+    <div className="msgh5">
+      <p>
+        <b>
+          {content.user._id === currentUser.userId ? "You" : content.user.name}{" "}
+        </b>
+        <b className="time">{new Date(content.time).toISOString()}</b>
+      </p>
+      <h6 className="msgh6">{content.text} </h6>
+    </div>
+  );
+}
+export default MessagesContent;
