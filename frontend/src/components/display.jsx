@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import Channels from "./channels.jsx";
 import Button from "react-bootstrap/Button";
@@ -6,7 +8,6 @@ import Form from "react-bootstrap/Form";
 import Member from "./member.jsx";
 import Messages from "./messages.jsx";
 import axios from "axios";
-
 import { io } from "socket.io-client";
 import { useSearchParams } from "react-router-dom";
 const API_BASE_URL = process.env.REACT_APP_API_BACKEND_BASEURL;
@@ -147,12 +148,12 @@ function Display() {
             <div
               style={{
                 height: "90vh",
-                overflow: "hidden",
+
                 display: "flex",
                 flexDirection: "column",
               }}
             >
-              {groupConversations && user && groupConversations.length > 0 && (
+              {groupConversations && user && groupConversations.length >= 0 && (
                 <Channels
                   heading="Channels"
                   chats={groupConversations}
@@ -168,7 +169,7 @@ function Display() {
               )}
               {user &&
                 directConversations &&
-                directConversations.length > 0 && (
+                directConversations.length >= 0 && (
                   <>
                     <hr />
                     <Channels
@@ -203,7 +204,7 @@ function Display() {
                       : ""}
                   </div>
                   <div onClick={() => setIsShowMember(true)}>
-                    <i class="fa-solid fa-users"></i>
+                    <i className="fa-solid fa-users"></i>
                   </div>
                 </div>
               </div>
@@ -224,7 +225,7 @@ function Display() {
                     onClick={handleSendMessage}
                     className="btn btn-primary"
                   >
-                    Send
+                    <FontAwesomeIcon icon={faPaperPlane} size="2xl" />
                   </Button>
                 </div>
               </div>
