@@ -4,7 +4,7 @@ function Text(props) {
     <div className="row1">
       <input
         id="text"
-        className="rowtext"
+        className=""
         type="text"
         value={props.val}
         onChange={props.t}

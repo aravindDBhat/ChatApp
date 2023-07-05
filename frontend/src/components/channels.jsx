@@ -3,6 +3,8 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Select from "react-select";
 import Form from "react-bootstrap/Form";
+import ScrollableFeed from "react-scrollable-feed";
+import Card from "react-bootstrap/Card";
 import makeAnimated from "react-select/animated";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -59,7 +61,11 @@ function Channels({ chats, type, currentUser, onNewConversationCreate }) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
   const getDirectChatName = (chat) => {
-    return chat.users.filter((user) => user._id !== currentUser.userId)[0].name;
+    const name = chat.users.filter((user) => user._id !== currentUser.userId)[0]
+      .name;
+    if (name) {
+      return name;
+    }
   };
   const fetchMembers = async () => {
     try {
@@ -81,94 +87,104 @@ function Channels({ chats, type, currentUser, onNewConversationCreate }) {
       style={{
         width: "100%",
         height: "100%",
-        overflowY: "scroll",
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-        }}
-      >
-        <h4>{capitalizeFirstLetter(type)} chats</h4>
+      <Card style={{ width: "12rem" }}>
+        <Card.Header variant="top">
+          {" "}
+          <h5>{capitalizeFirstLetter(type)} chats</h5>
+        </Card.Header>
+        <Card.Body
+          style={{
+            height: "10.75rem",
+            overflowY: "scroll",
+          }}
+        >
+          {chats &&
+            chats.length > 0 &&
+            chats.map((chat) => (
+              <div className="" key={chat._id}>
+                <a href={`/text?chatId=${chat.conversationId}`}>
+                  {type == "group"
+                    ? chat.conversationName
+                    : getDirectChatName(chat)}
+                </a>
+              </div>
+            ))}
+          <Modal show={showModal} size="lg" onHide={() => setShowModal(false)}>
+            <Modal.Header closeButton>
+              <Modal.Title id="contained-modal-title-vcenter">
+                Create New {capitalizeFirstLetter(type)} Chat
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              {type && type === "group" && (
+                <div className="mb-4">
+                  <Form.Label htmlFor="roomName">
+                    Enter New Group Name
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={conversationName}
+                    onChange={(e) => setConversationName(e.target.value)}
+                    id="roomName"
+                    aria-describedby="roomNameHelp"
+                  />
+                </div>
+              )}
+              <div>
+                <Form.Label htmlFor="roomName">
+                  Select Users For New {capitalizeFirstLetter(type)} Chat
+                </Form.Label>
+                <Select
+                  isLoading={isLoading}
+                  loadingMessage={"Loading Users..."}
+                  label={`Select users to create new ${capitalizeFirstLetter(
+                    type
+                  )} Chat`}
+                  closeMenuOnSelect={type === "direct"}
+                  onChange={handleSelectUser}
+                  components={animatedComponents}
+                  isMulti={type === "group"}
+                  options={
+                    members &&
+                    members.length > 0 &&
+                    members.map(
+                      (member) =>
+                        member._id !== currentUser.id && {
+                          value: member._id,
+                          label: member.name,
+                        }
+                    )
+                  }
+                />
+              </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                isLoading={isLoading}
+                disabled={
+                  type === "group" &&
+                  !conversationName &&
+                  (selectedUserForNewConversation.length === 0 || isLoading)
+                }
+                onClick={handleCreateNewConversation}
+              >
+                Create New {capitalizeFirstLetter(type)} Chat
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </Card.Body>
 
-        <Button variant="" onClick={handleShowModal}>
-          <i class="fa-solid fa-plus"></i>
-        </Button>
-      </div>
-      {chats &&
-        chats.length > 0 &&
-        chats.map((chat) => (
-          <div className="" key={chat._id}>
-            <a href={`/text?chatId=${chat.conversationId}`}>
-              {type == "group"
-                ? chat.conversationName
-                : getDirectChatName(chat)}
-            </a>
-          </div>
-        ))}
-      <Modal show={showModal} size="lg" onHide={() => setShowModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter">
-            Create New {capitalizeFirstLetter(type)} Chat
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {type && type === "group" && (
-            <div className="mb-4">
-              <Form.Label htmlFor="roomName">Enter New Group Name</Form.Label>
-              <Form.Control
-                type="text"
-                value={conversationName}
-                onChange={(e) => setConversationName(e.target.value)}
-                id="roomName"
-                aria-describedby="roomNameHelp"
-              />
-            </div>
-          )}
-          <div>
-            <Form.Label htmlFor="roomName">
-              Select Users For New {capitalizeFirstLetter(type)} Chat
-            </Form.Label>
-            <Select
-              isLoading={isLoading}
-              loadingMessage={"Loading Users..."}
-              label={`Select users to create new ${capitalizeFirstLetter(
-                type
-              )} Chat`}
-              closeMenuOnSelect={type === "direct"}
-              onChange={handleSelectUser}
-              components={animatedComponents}
-              isMulti={type === "group"}
-              options={
-                members &&
-                members.length > 0 &&
-                members.map(
-                  (member) =>
-                    member._id !== currentUser.id && {
-                      value: member._id,
-                      label: member.name,
-                    }
-                )
-              }
-            />
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
+        <Card.Footer>
           <Button
-            isLoading={isLoading}
-            disabled={
-              type === "group" &&
-              !conversationName &&
-              (selectedUserForNewConversation.length === 0 || isLoading)
-            }
-            onClick={handleCreateNewConversation}
+            className="btn btn-primary btn-md btn-block"
+            onClick={handleShowModal}
           >
-            Create New {capitalizeFirstLetter(type)} Chat
+            Create new Group
           </Button>
-        </Modal.Footer>
-      </Modal>
+        </Card.Footer>
+      </Card>
     </div>
   );
 }

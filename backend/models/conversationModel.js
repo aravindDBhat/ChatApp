@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { userSchema } = require('./userModel')
+const { userSchema } = require("./userModel");
 const conversarionSchema = mongoose.Schema({
   conversationId: {
     type: String,
@@ -7,7 +7,7 @@ const conversarionSchema = mongoose.Schema({
   },
   conversationName: {
     type: String,
-    required: false
+    required: false,
   },
   users: [userSchema],
 
@@ -20,5 +20,5 @@ const conversarionSchema = mongoose.Schema({
     required: true,
   },
 });
-const Conversation = mongoose.model("Conversation", conversarionSchema);
+const Conversation = mongoose.model("Conversations", conversarionSchema);
 module.exports = Conversation;

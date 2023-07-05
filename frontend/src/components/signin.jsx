@@ -91,6 +91,7 @@ function SignIn() {
                 className="form-control"
                 value={password}
                 onChange={handlePasswordChange}
+                placeholder="Password"
               />
             </div>
             {error && (

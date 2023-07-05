@@ -3,15 +3,15 @@ import MessagesContent from "./messageContent.jsx";
 import ScrollableFeed from "react-scrollable-feed";
 function Messages({ array, currentUser }) {
   return (
-    <ScrollableFeed>
-      <div className="msgs">
+    <div className="msgs">
+      <ScrollableFeed>
         {array &&
           array.length > 0 &&
           array.map((msg) => (
             <MessagesContent currentUser={currentUser} content={msg} />
           ))}
-      </div>
-    </ScrollableFeed>
+      </ScrollableFeed>
+    </div>
   );
 }
 export default Messages;

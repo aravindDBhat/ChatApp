@@ -120,6 +120,7 @@ function SignUp() {
                 className="form-control"
                 value={password}
                 onChange={handlePasswordChange}
+                placeholder="********"
               />
             </div>
             {err && (
