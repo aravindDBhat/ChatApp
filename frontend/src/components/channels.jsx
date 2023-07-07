@@ -30,9 +30,16 @@ function Channels({ chats, type, currentUser, onNewConversationCreate }) {
 
     if (type === "group") {
       const users = value.map((user) => user && user.value);
+      users.push(currentUser.userId);
       setSelectedUserForNewConversation(users);
     } else {
+      console.log("value is : ", value.value);
+      console.log("currentUser is : ", currentUser.userId);
       setSelectedUserForNewConversation([currentUser.userId, value.value]);
+      console.log(
+        "selectedUserForNewConversation : ",
+        selectedUserForNewConversation
+      );
     }
   };
   const handleCreateNewConversation = async () => {
@@ -60,12 +67,26 @@ function Channels({ chats, type, currentUser, onNewConversationCreate }) {
   function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
+
+  const getOptions = (users) => {
+    const filteredUser = users.filter(
+      (user) => user._id !== currentUser.userId
+    );
+    const options = filteredUser.map((u) => ({
+      value: u._id,
+      label: u.name,
+    }));
+    return options;
+  };
   const getDirectChatName = (chat) => {
-    const name = chat.users.filter((user) => user._id !== currentUser.userId)[0]
-      .name;
-    if (name) {
-      return name;
-    }
+    const name =
+      chat.users &&
+      chat.users.length > 0 &&
+      chat.users.map((user) =>
+        user._id !== currentUser.userId ? user.name : null
+      );
+    console.log(name);
+    return name;
   };
   const fetchMembers = async () => {
     try {
@@ -87,12 +108,13 @@ function Channels({ chats, type, currentUser, onNewConversationCreate }) {
       style={{
         width: "100%",
         height: "100%",
+        position: "relative",
       }}
     >
-      <Card style={{ width: "12rem" }}>
+      <Card style={{ position: "absolute", height: "100%", width: "100%" }}>
         <Card.Header variant="top">
           {" "}
-          <h5>{capitalizeFirstLetter(type)} chats</h5>
+          <h6>{capitalizeFirstLetter(type)} chats</h6>
         </Card.Header>
         <Card.Body
           style={{
@@ -105,7 +127,7 @@ function Channels({ chats, type, currentUser, onNewConversationCreate }) {
             chats.map((chat) => (
               <div className="" key={chat._id}>
                 <a href={`/text?chatId=${chat.conversationId}`}>
-                  {type == "group"
+                  {type === "group"
                     ? chat.conversationName
                     : getDirectChatName(chat)}
                 </a>
@@ -147,15 +169,7 @@ function Channels({ chats, type, currentUser, onNewConversationCreate }) {
                   components={animatedComponents}
                   isMulti={type === "group"}
                   options={
-                    members &&
-                    members.length > 0 &&
-                    members.map(
-                      (member) =>
-                        member._id !== currentUser.id && {
-                          value: member._id,
-                          label: member.name,
-                        }
-                    )
+                    members && members.length > 0 ? getOptions(members) : []
                   }
                 />
               </div>
@@ -178,10 +192,12 @@ function Channels({ chats, type, currentUser, onNewConversationCreate }) {
 
         <Card.Footer>
           <Button
-            className="btn btn-primary btn-md btn-block"
+            className="btn btn-primary btn-sm btn-block"
             onClick={handleShowModal}
           >
-            Create new Group
+            {capitalizeFirstLetter(type) === "Group"
+              ? "Create new Group"
+              : "Create new chat "}
           </Button>
         </Card.Footer>
       </Card>

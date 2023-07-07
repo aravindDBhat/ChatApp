@@ -141,7 +141,7 @@ function Display() {
   }, []);
 
   return (
-    <div className="divmargin .container-fluid">
+    <div className="divmargin .container-fluid ">
       <div className="container">
         <div className="row ">
           <div className="col-2">
@@ -171,7 +171,7 @@ function Display() {
                 directConversations &&
                 directConversations.length >= 0 && (
                   <>
-                    <hr />
+                    <hr width="165rem" />
                     <Channels
                       heading="Direct Messages"
                       chats={directConversations}
@@ -193,25 +193,32 @@ function Display() {
             <div className="d-flex flex-column justify-content-between h-100 m-0 p-0">
               <div className="pb-4 border-bottom">
                 <div className="d-flex  justify-content-between">
-                  <div>
+                  <div width="100%">
                     {currentConversation &&
                     currentConversation?.conversationType === "group"
                       ? currentConversation.conversationName
                       : ""}
                     {currentConversation &&
-                    currentConversation?.conversationType === "direct"
-                      ? getDirectChatName(currentConversation)
-                      : ""}
+                    currentConversation?.conversationType === "direct" ? (
+                      <h1 className="ms-5">
+                        {getDirectChatName(currentConversation)}
+                      </h1>
+                    ) : (
+                      ""
+                    )}
                   </div>
                   <div onClick={() => setIsShowMember(true)}>
-                    <i className="fa-solid fa-users"></i>
+                    <i className="fa-solid fa-users fa-xl text-center mt-3"></i>
                   </div>
                 </div>
               </div>
               <div className="h-100">
                 <Messages currentUser={user} array={messageArray} />
               </div>
-              <div className="d-flex justify-content-between">
+              <div
+                className="w-100 d-flex justify-content-between"
+                style={{ position: "relative", height: "8%" }}
+              >
                 <Form.Control
                   type="text"
                   value={message}
@@ -220,12 +227,12 @@ function Display() {
                   aria-describedby="roomNameHelp"
                 />
 
-                <div className="m-2">
+                <div className="ms-1">
                   <Button
                     onClick={handleSendMessage}
                     className="btn btn-primary"
                   >
-                    <FontAwesomeIcon icon={faPaperPlane} size="2xl" />
+                    <FontAwesomeIcon icon={faPaperPlane} size="xl" />
                   </Button>
                 </div>
               </div>
