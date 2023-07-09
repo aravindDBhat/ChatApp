@@ -5,6 +5,10 @@ const date = new Date().toLocaleString("en-us", {
 });
 
 function Day() {
-  return <div>. . . . . {date} . . . . .</div>;
+  return (
+    <div style={{ textAlign: "center" }}>
+      <h5>. . . . . {date} . . . . .</h5>
+    </div>
+  );
 }
 export default Day;

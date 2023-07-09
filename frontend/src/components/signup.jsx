@@ -23,8 +23,9 @@ function SignUp() {
 
   const handleNameChanges = (e) => {
     if (err) setErr("");
-
-    setName(e.target.value);
+    const Name =
+      e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1);
+    setName(Name);
   };
 
   const handleSubmit = async () => {

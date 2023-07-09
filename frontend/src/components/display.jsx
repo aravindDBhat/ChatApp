@@ -27,13 +27,12 @@ function Display() {
   const getDirectChatName = (chat) => {
     try {
       const name = chat.users.filter((u) => u._id !== user.userId)[0].name;
-      console.log("CHatNA=>", name);
       return name;
     } catch (error) {}
   };
 
   socket.on("newMessage", (data) => {
-    setMessageArray([...messageArray, data]);
+    setMessageArray((current) => [...messageArray, data]);
   });
 
   const fetchCurrentConversationDetails = async (conversationId) => {
@@ -80,6 +79,8 @@ function Display() {
   };
 
   const handleSendMessage = async () => {
+    const t = new Date();
+
     try {
       const payload = {
         conversationId: chatId,
@@ -90,14 +91,14 @@ function Display() {
         channelId: chatId,
         messageData: payload,
       });
-      setMessageArray([
+      setMessageArray((current) => [
         ...messageArray,
         {
           user: {
             _id: user.userId,
             name: user.name,
           },
-          time: new Date(),
+          time: t,
           text: message,
         },
       ]);
@@ -141,13 +142,13 @@ function Display() {
   }, []);
 
   return (
-    <div className="divmargin .container-fluid ">
-      <div className="container">
+    <div className="container-fluid ">
+      <div>
         <div className="row ">
-          <div className="col-2">
+          <div style={{ width: "15rem" }} className="">
             <div
               style={{
-                height: "90vh",
+                height: "99.3vh",
 
                 display: "flex",
                 flexDirection: "column",
@@ -171,7 +172,6 @@ function Display() {
                 directConversations &&
                 directConversations.length >= 0 && (
                   <>
-                    <hr width="165rem" />
                     <Channels
                       heading="Direct Messages"
                       chats={directConversations}
@@ -188,21 +188,34 @@ function Display() {
                 )}
             </div>
           </div>
-          <div className="col">
-            {/* <ScrollToBottom className="scroll-to-bottom"> */}
-            <div className="d-flex flex-column justify-content-between h-100 m-0 p-0">
-              <div className="pb-4 border-bottom">
+          <div
+            style={{
+              position: "relative",
+              marginLeft: "-2.7%",
+              marginRight: "2%",
+            }}
+            className="col"
+          >
+            <div
+              style={{ width: "100%", position: "absolute" }}
+              className="d-flex flex-column justify-content-between h-100 m-0 p-0"
+            >
+              <div className="border-bottom">
                 <div className="d-flex  justify-content-between">
-                  <div width="100%">
+                  <div>
                     {currentConversation &&
-                    currentConversation?.conversationType === "group"
-                      ? currentConversation.conversationName
-                      : ""}
+                    currentConversation?.conversationType === "group" ? (
+                      <h3 className="ms-5">
+                        {currentConversation.conversationName}
+                      </h3>
+                    ) : (
+                      ""
+                    )}
                     {currentConversation &&
                     currentConversation?.conversationType === "direct" ? (
-                      <h1 className="ms-5">
+                      <h3 className="ms-5">
                         {getDirectChatName(currentConversation)}
-                      </h1>
+                      </h3>
                     ) : (
                       ""
                     )}
@@ -216,7 +229,7 @@ function Display() {
                 <Messages currentUser={user} array={messageArray} />
               </div>
               <div
-                className="w-100 d-flex justify-content-between"
+                className=" d-flex justify-content-between"
                 style={{ position: "relative", height: "8%" }}
               >
                 <Form.Control
@@ -224,6 +237,7 @@ function Display() {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   id="roomName"
+                  placeholder="Type message . . ."
                   aria-describedby="roomNameHelp"
                 />
 

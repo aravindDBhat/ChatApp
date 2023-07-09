@@ -1,5 +1,6 @@
 import axios from "axios";
-import ScrollableFeed from "react-scrollable-feed";
+import Offcanvas from "react-bootstrap/Offcanvas";
+
 import { Drawer, Placeholder } from "rsuite";
 import React, { useEffect, useState } from "react";
 function Member({ handleClick, isOpen }) {
@@ -22,20 +23,34 @@ function Member({ handleClick, isOpen }) {
   };
 
   return (
-    <Drawer
-      onOpen={fetchMembers}
-      open={isOpen}
-      onClose={() => handleClick(false)}
-      size="sm"
-    >
-      <Drawer.Body>
-        {!isLoading ? (
-          members.map((member) => <div>{member.name}</div>)
-        ) : (
-          <Placeholder></Placeholder>
-        )}
-      </Drawer.Body>
-    </Drawer>
+    <>
+      <Offcanvas show={isOpen} onHide={() => handleClick(false)}>
+        <Offcanvas.Header closeButton>
+          <Offcanvas.Title>Members</Offcanvas.Title>
+        </Offcanvas.Header>
+        <Offcanvas.Body>
+          {!isLoading ? (
+            members.map((member) => <div>{member.name}</div>)
+          ) : (
+            <Placeholder></Placeholder>
+          )}
+        </Offcanvas.Body>
+      </Offcanvas>
+    </>
+    // <Drawer
+    //   onOpen={fetchMembers}
+    //   open={isOpen}
+    //   onClose={() => handleClick(false)}
+    //   size="sm"
+    // >
+    //   <Drawer.Body>
+    //     {!isLoading ? (
+    //       members.map((member) => <div>{member.name}</div>)
+    //     ) : (
+    //       <Placeholder></Placeholder>
+    //     )}
+    //   </Drawer.Body>
+    // </Drawer>
   );
 }
 export default Member;

@@ -3,7 +3,6 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Select from "react-select";
 import Form from "react-bootstrap/Form";
-import ScrollableFeed from "react-scrollable-feed";
 import Card from "react-bootstrap/Card";
 import makeAnimated from "react-select/animated";
 import axios from "axios";
@@ -85,7 +84,6 @@ function Channels({ chats, type, currentUser, onNewConversationCreate }) {
       chat.users.map((user) =>
         user._id !== currentUser.userId ? user.name : null
       );
-    console.log(name);
     return name;
   };
   const fetchMembers = async () => {
@@ -106,19 +104,26 @@ function Channels({ chats, type, currentUser, onNewConversationCreate }) {
   return (
     <div
       style={{
+        margin: "0 -5%",
         width: "100%",
         height: "100%",
         position: "relative",
       }}
     >
-      <Card style={{ position: "absolute", height: "100%", width: "100%" }}>
+      <Card
+        style={{
+          position: "absolute",
+
+          width: "100%",
+        }}
+      >
         <Card.Header variant="top">
           {" "}
           <h6>{capitalizeFirstLetter(type)} chats</h6>
         </Card.Header>
         <Card.Body
           style={{
-            height: "10.75rem",
+            height: "13rem",
             overflowY: "scroll",
           }}
         >

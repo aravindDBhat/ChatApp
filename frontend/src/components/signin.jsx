@@ -64,14 +64,14 @@ function SignIn() {
   };
   return (
     <>
-      <div className="d-flex  flex-row justify-content-center">
+      <div className="bg-info d-flex  flex-row justify-content-center">
         <div
           className="card"
           style={{
             marginTop: "10rem",
           }}
         >
-          <div className="card-body">
+          <div className="bg-info-subtle card-body">
             <h5 className="card-title">Signin</h5>
             <div className="mb-3">
               <label className="form-label">Email address</label>
