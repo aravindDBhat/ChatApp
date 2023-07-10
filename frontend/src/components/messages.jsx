@@ -6,6 +6,7 @@ function Messages({ array, currentUser }) {
   return (
     <Card
       style={{
+        borderRadius: "0",
         backgroundColor: "bg-light",
         position: "absolute",
         height: "86.4%",

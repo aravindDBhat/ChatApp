@@ -3,13 +3,21 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Select from "react-select";
 import Form from "react-bootstrap/Form";
+import ListGroup from "react-bootstrap/ListGroup";
+import "../CSS/style.css";
 import Card from "react-bootstrap/Card";
 import makeAnimated from "react-select/animated";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 const animatedComponents = makeAnimated();
-function Channels({ chats, type, currentUser, onNewConversationCreate }) {
+function Channels({
+  heading,
+  chats,
+  type,
+  currentUser,
+  onNewConversationCreate,
+}) {
   const [showModal, setShowModal] = useState(false);
   const [members, setMembers] = useState([]);
   const [conversationName, setConversationName] = useState("");
@@ -40,6 +48,11 @@ function Channels({ chats, type, currentUser, onNewConversationCreate }) {
         selectedUserForNewConversation
       );
     }
+  };
+  const conversationNameSet = (e) => {
+    const name =
+      e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1);
+    setConversationName(name);
   };
   const handleCreateNewConversation = async () => {
     try {
@@ -113,32 +126,61 @@ function Channels({ chats, type, currentUser, onNewConversationCreate }) {
       <Card
         style={{
           position: "absolute",
-
+          borderRadius: "0",
           width: "100%",
+          borderColor: "gray",
+          borderTop: "solid 0.5px",
         }}
+        bg="dark-subtle"
       >
         <Card.Header variant="top">
           {" "}
-          <h6>{capitalizeFirstLetter(type)} chats</h6>
+          <h5>{heading} </h5>
         </Card.Header>
-        <Card.Body
+        <div
           style={{
-            height: "13rem",
+            height: "12.5rem",
             overflowY: "scroll",
+            background: "white",
           }}
         >
           {chats &&
             chats.length > 0 &&
             chats.map((chat) => (
-              <div className="" key={chat._id}>
-                <a href={`/text?chatId=${chat.conversationId}`}>
-                  {type === "group"
-                    ? chat.conversationName
-                    : getDirectChatName(chat)}
+              <ListGroup variant="flush" key={chat._id}>
+                <a
+                  style={{
+                    textDecoration: "none",
+                  }}
+                  href={`/text?chatId=${chat.conversationId}`}
+                >
+                  <ListGroup.Item
+                    id="hov"
+                    style={{
+                      borderColor: "black",
+                      borderWidth: "thin",
+                      borderBottom: "solid 0.5px",
+                      borderTop: "0px",
+                      borderLeft: "0px",
+                      borderRight: "0px",
+                      fontWeight: "520",
+                    }}
+                  >
+                    {" "}
+                    {type === "group" ? (
+                      <div style={{ fontSize: "16px", fontWeight: "600" }}>
+                        # {chat.conversationName}
+                      </div>
+                    ) : (
+                      <div style={{ fontSize: "16px", fontWeight: "600" }}>
+                        {getDirectChatName(chat)}
+                      </div>
+                    )}
+                  </ListGroup.Item>
                 </a>
-              </div>
+              </ListGroup>
             ))}
-          <Modal show={showModal} size="lg" onHide={() => setShowModal(false)}>
+          <Modal show={showModal} size="md" onHide={() => setShowModal(false)}>
             <Modal.Header closeButton>
               <Modal.Title id="contained-modal-title-vcenter">
                 Create New {capitalizeFirstLetter(type)} Chat
@@ -153,7 +195,7 @@ function Channels({ chats, type, currentUser, onNewConversationCreate }) {
                   <Form.Control
                     type="text"
                     value={conversationName}
-                    onChange={(e) => setConversationName(e.target.value)}
+                    onChange={(e) => conversationNameSet(e)}
                     id="roomName"
                     aria-describedby="roomNameHelp"
                   />
@@ -193,11 +235,11 @@ function Channels({ chats, type, currentUser, onNewConversationCreate }) {
               </Button>
             </Modal.Footer>
           </Modal>
-        </Card.Body>
+        </div>
 
         <Card.Footer>
           <Button
-            className="btn btn-primary btn-sm btn-block"
+            className="btn btn-primary col-sm-12 "
             onClick={handleShowModal}
           >
             {capitalizeFirstLetter(type) === "Group"

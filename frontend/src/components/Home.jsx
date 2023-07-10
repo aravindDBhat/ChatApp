@@ -6,8 +6,8 @@ export default function HomePage() {
 
   useEffect(() => {
     try {
-      const token = window.localStorage.getItem("token");
-      const user = window.localStorage.getItem("user");
+      const token = window.localStorage.deleteItem("token");
+      const user = window.localStorage.deleteItem("user");
       if (!token || !user) {
         console.log("User is not logged in. Redireting to /signin");
         navigate("/signin");

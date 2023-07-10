@@ -23,7 +23,10 @@ function Display() {
   const [directConversations, setDirectConversations] = useState([]);
   const [isShowMember, setIsShowMember] = useState(false);
   const [currentConversation, setCurrentConversation] = useState({});
-
+  const setM = (e) => {
+    const m = e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1);
+    setMessage(m);
+  };
   const getDirectChatName = (chat) => {
     try {
       const name = chat.users.filter((u) => u._id !== user.userId)[0].name;
@@ -142,7 +145,7 @@ function Display() {
   }, []);
 
   return (
-    <div className="container-fluid ">
+    <div className=" container-fluid ">
       <div>
         <div className="row ">
           <div style={{ width: "15rem" }} className="">
@@ -201,7 +204,12 @@ function Display() {
               className="d-flex flex-column justify-content-between h-100 m-0 p-0"
             >
               <div className="border-bottom">
-                <div className="d-flex  justify-content-between">
+                <div
+                  style={{
+                    color: "black",
+                  }}
+                  className="bg-secondary-subtle d-flex  justify-content-between"
+                >
                   <div>
                     {currentConversation &&
                     currentConversation?.conversationType === "group" ? (
@@ -221,7 +229,7 @@ function Display() {
                     )}
                   </div>
                   <div onClick={() => setIsShowMember(true)}>
-                    <i className="fa-solid fa-users fa-xl text-center mt-3"></i>
+                    <i className="fa-solid fa-users fa-xl text-center mt-3 me-5"></i>
                   </div>
                 </div>
               </div>
@@ -230,19 +238,21 @@ function Display() {
               </div>
               <div
                 className=" d-flex justify-content-between"
-                style={{ position: "relative", height: "8%" }}
+                style={{ position: "relative", height: "8%", width: "97.3%" }}
               >
                 <Form.Control
+                  style={{ borderRadius: "0" }}
                   type="text"
                   value={message}
-                  onChange={(e) => setMessage(e.target.value)}
+                  onChange={(e) => setM(e)}
                   id="roomName"
                   placeholder="Type message . . ."
                   aria-describedby="roomNameHelp"
                 />
 
-                <div className="ms-1">
+                <div className="mt-0">
                   <Button
+                    style={{ borderRadius: "0", padding: "8px", width: "170%" }}
                     onClick={handleSendMessage}
                     className="btn btn-primary"
                   >

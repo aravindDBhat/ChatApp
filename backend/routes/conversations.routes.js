@@ -9,86 +9,78 @@ router.get("/", async (req, res, next) => {
 
     const conversations = await coversationService.getUserByConversationId({
       userId,
-      type
+      type,
     });
 
     res.json({
       statusCode: 200,
       data: conversations,
     });
-
   } catch (err) {
     console.error(err);
-    let errorData
+    let errorData;
     try {
-      errorData = JSON.parse(err.message)
-    } catch (e) { }
+      errorData = JSON.parse(err.message);
+    } catch (e) {}
     res.status(errorData?.statusCode || 500).json({
       statusCode: errorData?.statusCode || 500,
-      error: errorData?.error || err.message
-    })
+      error: errorData?.error || err.message,
+    });
   }
 });
 
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
   try {
-    const {
-      users,
-      conversationId,
-      conversationName,
-      conversationType
-    } = req.body
-    const requiredFields = ["users", 'conversationId', 'conversationType']
-    requiredFields.forEach(field => {
+    const { users, conversationId, conversationName, conversationType } =
+      req.body;
+    const requiredFields = ["users", "conversationId", "conversationType"];
+    requiredFields.forEach((field) => {
       if (!req.body[field]) {
         res.json({
           statusCode: 400,
           error: `${field} is required`,
         });
       }
-    })
-    const conversationUsers = await userService.findUserByUsersIds(users)
+    });
+    const conversationUsers = await userService.findUserByUsersIds(users);
     const newConversation = await coversationService.createNewConversation({
       users: conversationUsers,
       conversationId,
       conversationName,
       conversationType,
-      res
-    })
+      res,
+    });
     res.json({
       statusCode: 200,
-      data: newConversation
-    })
-  } catch (error) {
+      data: newConversation,
+    });
+  } catch (error) {}
+});
 
-  }
-})
-
-router.get('/:conversationId', async (req, res) => {
+router.get("/:conversationId", async (req, res) => {
   try {
-    const {
-      conversationId,
-    } = req.params
+    const { conversationId } = req.params;
 
-    const conversation = await coversationService.getConversationById(conversationId)
+    const conversation = await coversationService.getConversationById(
+      conversationId
+    );
     if (!conversation) {
-
       return res.status(404).json({
         statusCode: 404,
-        error: `ConversationId not found`
-      })
+        error: `ConversationId not found`,
+      });
     }
 
     res.json({
       statusCode: 200,
-      data: conversation
-    })
+      data: conversation,
+    });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({
       statusCode: 500,
-      error: error.message
-    })
+      error: error.message,
+    });
   }
-})
+});
 module.exports = router;

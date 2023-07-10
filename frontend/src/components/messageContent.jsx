@@ -14,11 +14,20 @@ function MessagesContent({ content, currentUser }) {
           {" "}
           <div>
             <b>
-              {content.user._id === currentUser.userId
-                ? "You"
-                : content.user.name}{" "}
+              {content.user._id === currentUser.userId ? (
+                ""
+              ) : (
+                <h6 style={{ fontSize: "14px", display: "inline-block" }}>
+                  {content.user.name}
+                </h6>
+              )}{" "}
             </b>
-            <b className="time">{time}</b>
+            <h6
+              className="time"
+              style={{ fontSize: "14px", display: "inline-block" }}
+            >
+              {time}
+            </h6>
           </div>
           <div>
             <div
@@ -41,11 +50,20 @@ function MessagesContent({ content, currentUser }) {
           {" "}
           <div>
             <b>
-              {content.user._id === currentUser.userId
-                ? "You"
-                : content.user.name}{" "}
+              {content.user._id === currentUser.userId ? (
+                <p style={{ fontSize: "14px", display: "inline-block" }}>You</p>
+              ) : (
+                <h6 style={{ fontSize: "14px", display: "inline-block" }}>
+                  {content.user.name}
+                </h6>
+              )}{" "}
             </b>
-            <b className="time">{time}</b>
+            <h6
+              className="time"
+              style={{ fontSize: "14px", display: "inline-block" }}
+            >
+              {time}
+            </h6>
           </div>
           <div>
             <div className="bg-light msgh6"> {content.text} </div>

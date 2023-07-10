@@ -81,7 +81,7 @@ function SignUp() {
   };
 
   return (
-    <>
+    <div style={{ backgroundColor: "#f2f2f2", width: "100%", height: "100%" }}>
       <div className="d-flex  flex-row justify-content-center">
         <div
           className="card w-40"
@@ -129,19 +129,22 @@ function SignUp() {
                 {err}
               </div>
             )}
-            <button
-              onClick={handleSubmit}
-              className="btn btn-primary me-5 mt-4"
-            >
-              Submit
-            </button>
-            <a className="btn btn-primary ms-5 mt-4" href="/signin">
-              SignIn
-            </a>
+            <div style={{ textAlign: "center" }}>
+              {" "}
+              <button
+                onClick={handleSubmit}
+                className="btn btn-primary  col-sm-12 mt-3"
+              >
+                Submit
+              </button>
+              <div className="  mt-3" style={{ fontSize: "14px" }}>
+                Already a user? <a href="/signin">SignIn</a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 export default SignUp;

@@ -1,6 +1,6 @@
 import axios from "axios";
 import Offcanvas from "react-bootstrap/Offcanvas";
-
+import ListGroup from "react-bootstrap/ListGroup";
 import { Drawer, Placeholder } from "rsuite";
 import React, { useEffect, useState } from "react";
 function Member({ handleClick, isOpen }) {
@@ -23,34 +23,25 @@ function Member({ handleClick, isOpen }) {
   };
 
   return (
-    <>
-      <Offcanvas show={isOpen} onHide={() => handleClick(false)}>
-        <Offcanvas.Header closeButton>
-          <Offcanvas.Title>Members</Offcanvas.Title>
-        </Offcanvas.Header>
-        <Offcanvas.Body>
+    <Drawer
+      onOpen={fetchMembers}
+      open={isOpen}
+      onClose={() => handleClick(false)}
+      size="sm"
+    >
+      <Drawer.Header>Members</Drawer.Header>
+      <Drawer.Body>
+        <ListGroup variant="flush">
           {!isLoading ? (
-            members.map((member) => <div>{member.name}</div>)
+            members.map((member) => (
+              <ListGroup.Item>{`# ${member.name}`} </ListGroup.Item>
+            ))
           ) : (
             <Placeholder></Placeholder>
           )}
-        </Offcanvas.Body>
-      </Offcanvas>
-    </>
-    // <Drawer
-    //   onOpen={fetchMembers}
-    //   open={isOpen}
-    //   onClose={() => handleClick(false)}
-    //   size="sm"
-    // >
-    //   <Drawer.Body>
-    //     {!isLoading ? (
-    //       members.map((member) => <div>{member.name}</div>)
-    //     ) : (
-    //       <Placeholder></Placeholder>
-    //     )}
-    //   </Drawer.Body>
-    // </Drawer>
+        </ListGroup>
+      </Drawer.Body>
+    </Drawer>
   );
 }
 export default Member;

@@ -31,11 +31,7 @@ async function AddMsg(data) {
 
   const newMessage = new Message({
     conversationId,
-    time: new Date().toLocaleString("en-US", {
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    }),
+    time: new Date(),
     text,
     user: existingUser,
   });

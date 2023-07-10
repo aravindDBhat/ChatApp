@@ -63,15 +63,15 @@ function SignIn() {
     }
   };
   return (
-    <>
-      <div className="bg-info d-flex  flex-row justify-content-center">
+    <div style={{ backgroundColor: "#f2f2f2", width: "100%", height: "100%" }}>
+      <div className=" d-flex  flex-row justify-content-center">
         <div
           className="card"
           style={{
             marginTop: "10rem",
           }}
         >
-          <div className="bg-info-subtle card-body">
+          <div style={{}} className=" card-body">
             <h5 className="card-title">Signin</h5>
             <div className="mb-3">
               <label className="form-label">Email address</label>
@@ -99,19 +99,22 @@ function SignIn() {
                 {error}
               </div>
             )}
-            <button
-              onClick={handleSubmit}
-              className="btn btn-primary  me-5 mt-4"
-            >
-              Submit
-            </button>
-            <a href="/signup">
-              <button className="btn btn-primary  ms-5 mt-4">SignUp</button>
-            </a>
+            <div style={{ textAlign: "center" }}>
+              {" "}
+              <button
+                onClick={handleSubmit}
+                className="btn btn-primary  col-sm-12 mt-3"
+              >
+                Submit
+              </button>
+              <div className="  mt-3" style={{ fontSize: "14px" }}>
+                New to Chat App? <a href="/signup">SignUp</a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 export default SignIn;
