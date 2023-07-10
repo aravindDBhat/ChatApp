@@ -2,11 +2,12 @@ const express = require("express");
 const router = express.Router();
 const messageService = require("../services/message.service");
 
-
 router.get("/", async (req, res) => {
   try {
     const { conversationId } = req.query;
-    const allMessage = await messageService.getMessagesByConversationId(conversationId)
+    const allMessage = await messageService.getMessagesByConversationId(
+      conversationId
+    );
 
     res.json({
       statusCode: 200,
@@ -14,14 +15,14 @@ router.get("/", async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    let errorData
+    let errorData;
     try {
-      errorData = JSON.parse(err.message)
-    } catch (e) { }
+      errorData = JSON.parse(err.message);
+    } catch (e) {}
     res.status(errorData?.statusCode || 500).json({
       statusCode: errorData?.statusCode || 500,
-      error: errorData?.error || err.message
-    })
+      error: errorData?.error || err.message,
+    });
   }
 });
 
@@ -37,14 +38,14 @@ router.post("/", async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    let errorData
+    let errorData;
     try {
-      errorData = JSON.parse(err.message)
-    } catch (e) { }
+      errorData = JSON.parse(err.message);
+    } catch (e) {}
     res.status(errorData?.statusCode || 500).json({
       statusCode: errorData?.statusCode || 500,
-      error: errorData?.error || err.message
-    })
+      error: errorData?.error || err.message,
+    });
   }
 });
 module.exports = router;
