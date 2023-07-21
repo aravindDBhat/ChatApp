@@ -10,8 +10,9 @@ import Messages from "./messages.jsx";
 import axios from "axios";
 import { io } from "socket.io-client";
 import { useSearchParams } from "react-router-dom";
-const API_BASE_URL = process.env.REACT_APP_API_BACKEND_BASEURL;
-const socket = io.connect(process.env.REACT_APP_API_BACKEND_BASEURL);
+import REACT_APP_API_BACKEND_BASEURL from "./baseurl";
+const API_BASE_URL = REACT_APP_API_BACKEND_BASEURL;
+const socket = io.connect(REACT_APP_API_BACKEND_BASEURL);
 function Display() {
   const [messageArray, setMessageArray] = useState([]);
   const [message, setMessage] = useState("");
