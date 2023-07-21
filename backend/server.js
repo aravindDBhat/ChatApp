@@ -10,10 +10,10 @@ const usersRoute = require("./routes/users.routes");
 const authRoute = require("./routes/auth.routes");
 const messagesRoute = require("./routes/messages.routes");
 const conversationsRoute = require("./routes/conversations.routes");
-const PORT = process.env.APP_PORT || 4000;
+const PORT = process.env.PORT || process.env.APP_PORT;
 const app = express();
 const httpServer = createServer(app);
-const messageService = require('./services/message.service')
+const messageService = require("./services/message.service");
 
 const io = new Server(httpServer, {
   cors: {
@@ -52,20 +52,18 @@ app.use("/api/auth", authRoute);
 app.use("/api/messages", messagesRoute);
 app.use("/api/conversations", conversationsRoute);
 
-
 io.on("connection", (socket) => {
-
-  socket.on('joinChannel', ({ channelId }) => {
-    console.log("Join: " + channelId)
-    socket.join(channelId)
-  })
+  socket.on("joinChannel", ({ channelId }) => {
+    console.log("Join: " + channelId);
+    socket.join(channelId);
+  });
 
   socket.on("newMessage", async ({ channelId, messageData }) => {
     // Handle the "newMessage" event
     console.log("New message received:", messageData);
-    const newMessage = await messageService.AddMsg(messageData)
+    const newMessage = await messageService.AddMsg(messageData);
     // emit new message to clients
-    socket.in(channelId).emit('newMessage', newMessage)
+    socket.in(channelId).emit("newMessage", newMessage);
   });
 });
 
