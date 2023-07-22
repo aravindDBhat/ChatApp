@@ -12,14 +12,11 @@ const messagesRoute = require("./routes/messages.routes");
 const conversationsRoute = require("./routes/conversations.routes");
 const PORT = process.env.PORT || process.env.APP_PORT;
 const app = express();
+app.options("https://chatappbackend-n323.onrender.com", cors());
 const httpServer = createServer(app);
 const messageService = require("./services/message.service");
 
-const io = new Server(httpServer, {
-  cors: {
-    origin: "*",
-  },
-});
+const io = new Server(httpServer);
 mongoose
   .connect(process.env.MONGO_DB_URL, {
     useNewUrlParser: true,

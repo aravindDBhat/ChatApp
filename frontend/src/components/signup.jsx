@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import REACT_APP_API_BACKEND_BASEURL from "./baseurl";
-const API_BASE_URL = REACT_APP_API_BACKEND_BASEURL;
+const API_BASE_URL = process.env.REACT_APP_API_BACKEND_BASEURL;
 
 function SignUp() {
   const [email, setEmail] = useState("");

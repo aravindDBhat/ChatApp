@@ -10,7 +10,6 @@ import makeAnimated from "react-select/animated";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
-import REACT_APP_API_BACKEND_BASEURL from "./baseurl";
 const animatedComponents = makeAnimated();
 function Channels({
   heading,
@@ -59,7 +58,7 @@ function Channels({
     try {
       setIsloading(true);
       const { data: response } = await axios.post(
-        `${REACT_APP_API_BACKEND_BASEURL}/api/conversations`,
+        `${process.env.REACT_APP_API_BACKEND_BASEURL}/api/conversations`,
         {
           users: selectedUserForNewConversation,
           conversationId: uuidv4(),
@@ -104,7 +103,7 @@ function Channels({
     try {
       setIsloading(true);
       const { data } = await axios.get(
-        `${REACT_APP_API_BACKEND_BASEURL}/api/users`
+        `${process.env.REACT_APP_API_BACKEND_BASEURL}/api/users`
       );
       const usersData = data.data.users;
       setMembers(usersData);
