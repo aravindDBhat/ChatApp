@@ -46,7 +46,7 @@ app.use(
 );
 app.use(express.json);
 app.get("https://chat-app-api-gamma.vercel.app", (req, res) => {
-  res.json("hello");
+  res.send("hello");
 });
 
 app.use("/api/users", usersRoute);
