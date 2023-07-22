@@ -39,13 +39,13 @@ app.use(
 
 app.use(
   cors({
-    origin: ["https://chat-app-api-gamma.vercel.app/"],
+    origin: ["*"],
     methods: ["POST", "GET"],
     credentials: true,
   })
 );
 app.use(express.json);
-app.get("https://chat-app-api-gamma.vercel.app", (req, res) => {
+app.get("/", (req, res) => {
   res.send("hello");
 });
 
