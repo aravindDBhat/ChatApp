@@ -28,7 +28,6 @@ mongoose
     console.log(error);
   });
 
-//middleware
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(
@@ -48,7 +47,7 @@ app.use(express.json);
 app.get("/", (req, res) => {
   res.send("hello");
 });
-
+//middleware
 app.use("/api/users", usersRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/messages", messagesRoute);
@@ -69,7 +68,7 @@ io.on("connection", (socket) => {
   });
 });
 
-httpServer.listen(4000, () => {
+httpServer.listen(PORT, () => {
   console.log("Server is running on port " + PORT);
 });
 
