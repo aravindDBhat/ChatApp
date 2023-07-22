@@ -14,9 +14,6 @@ const PORT = process.env.PORT || process.env.APP_PORT;
 const app = express();
 const httpServer = createServer(app);
 const messageService = require("./services/message.service");
-app.get("/", (req, res) => {
-  res.json("hello");
-});
 
 const io = new Server(httpServer);
 mongoose
@@ -42,12 +39,15 @@ app.use(
 
 app.use(
   cors({
-    origin: [""],
+    origin: ["https://chat-app-api-gamma.vercel.app/"],
     methods: ["POST", "GET"],
     credentials: true,
   })
 );
 app.use(express.json);
+app.get("https://chat-app-api-gamma.vercel.app", (req, res) => {
+  res.json("hello");
+});
 
 app.use("/api/users", usersRoute);
 app.use("/api/auth", authRoute);
