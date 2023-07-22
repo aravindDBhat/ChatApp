@@ -15,7 +15,11 @@ const app = express();
 const httpServer = createServer(app);
 const messageService = require("./services/message.service");
 
-const io = new Server(httpServer);
+const io = new Server(httpServer,{
+  cors:{
+    origin:"*"
+      }
+});
 mongoose
   .connect(process.env.MONGO_DB_URL, {
     useNewUrlParser: true,
@@ -38,9 +42,7 @@ app.use(
 
 app.use(
   cors({
-    origin: ["*"],
-    methods: ["POST", "GET"],
-    credentials: true,
+    origin: process.env.FRONTEND_URL
   })
 );
 app.use(express.json);
