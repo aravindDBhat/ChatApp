@@ -40,9 +40,16 @@ app.use(
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: [""],
+    methods:["POST","GET"],
+    credentials:true
   })
+  
 );
+app.use(express.json)
+app.get("/",(req,res){
+  res.json("hello");
+})
 
 app.use("/api/users", usersRoute);
 app.use("/api/auth", authRoute);
